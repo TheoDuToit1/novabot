@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Demo Insurance · Checkout</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">Demo<span>Insurance</span></a>
+      <nav class="nav">
+        <a href="index.html#insCategories">Build</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      
+    </div>
+  </header>
+
+  <main class="container section">
+    <h1>Checkout</h1>
+    <form class="checkout" onsubmit="event.preventDefault(); alert('Demo checkout only. No real quotes or purchases.');">
+      <div class="grid two">
+        <div>
+          <h3>Applicant</h3>
+          <label>Email<input type="email" required></label>
+          <label>Phone<input type="tel"></label>
+
+          <h3>Address</h3>
+          <label>Full Name<input type="text" required></label>
+          <label>Address<input type="text" required></label>
+          <label>City<input type="text" required></label>
+          <div class="grid two tight">
+            <label>State<input type="text" required></label>
+            <label>ZIP<input type="text" required></label>
+          </div>
+        </div>
+        <div>
+          <h3>Payment</h3>
+          <label>Name on Card<input type="text" required></label>
+          <label>Card Number<input type="text" inputmode="numeric" required></label>
+          <div class="grid two tight">
+            <label>Expiry<input type="text" placeholder="MM/YY" required></label>
+            <label>CVC<input type="text" required></label>
+          </div>
+
+          <h3>Policy Summary</h3>
+          <div id="checkoutSummary" class="checkout-summary"></div>
+          <button class="btn btn-primary" type="submit">Place Order</button>
+        </div>
+      </div>
+    </form>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container tiny">© <span id="year"></span> DemoInsurance</div>
+  </footer>
+
+  <script src="assets/js/policy.js"></script>
+</body>
+</html>

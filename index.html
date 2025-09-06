@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Demo Insurance · Home</title>
+  <meta name="description" content="Demo insurance site featuring a Netflix-style policy builder and conversational assistant." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">Demo<span>Insurance</span></a>
+      <nav class="nav">
+        <a href="#insCategories">Build</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="dashboard.html">Dashboard</a>
+      </nav>
+      
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero: Insurance Netflix-style -->
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="hero-text" data-reveal>
+          <h1>Build Your Own Policy. Only Pay for What You Use.</h1>
+          <p>Pick cover modules like Netflix shows — customize protection your way. Keep your brand colors; enjoy a clean, dark, cinematic layout.</p>
+          <div class="cta-group">
+            <a class="btn btn-primary" href="#insCategories" id="startBuilding">Start Building</a>
+            <a class="btn btn-ghost" href="#insCategories">Browse Categories</a>
+          </div>
+        </div>
+        <div class="hero-art" data-reveal>
+          <img src="https://placehold.co/640x480/png?text=Insurance+Hero" alt="Insurance Hero" />
+        </div>
+      </div>
+      <div class="hero-bg" aria-hidden="true"></div>
+    </section>
+
+    <!-- Netflix-style rows + Sticky sidebar layout -->
+    <section class="container section nf-layout" id="insCategories">
+      <div class="nf-main">
+        <!-- Health Row -->
+        <div class="nf-row" id="row-health">
+          <div class="nf-row-head"><h2>Health</h2></div>
+          <div class="nf-scroller">
+            <article class="nf-card" data-name="Hospital Cash Cover" data-price="12.99" data-cat="Health">
+              <div class="thumb" style="background-image:url('https://placehold.co/480x270?text=Hospital+Cash')"></div>
+              <div class="meta"><h3>Hospital Cash Cover</h3><p>Daily cash payout while hospitalized.</p><div class="actions"><button class="btn btn-primary policy-add">Add $12.99/mo</button></div></div>
+            </article>
+            <article class="nf-card" data-name="Surgery Protection" data-price="9.99" data-cat="Health">
+              <div class="thumb" style="background-image:url('https://placehold.co/480x270?text=Surgery')"></div>
+              <div class="meta"><h3>Surgery Protection</h3><p>Lump-sum benefit for surgeries.</p><div class="actions"><button class="btn btn-primary policy-add">Add $9.99/mo</button></div></div>
+            </article>
+            <article class="nf-card" data-name="Doctor Visit Top-Up" data-price="6.50" data-cat="Health">
+              <div class="thumb" style="background-image:url('https://placehold.co/480x270?text=Doctor+Visits')"></div>
+              <div class="meta"><h3>Doctor Visit Top‑Up</h3><p>Extra GP visits covered per month.</p><div class="actions"><button class="btn btn-primary policy-add">Add $6.50/mo</button></div></div>
+            </article>
+            <article class="nf-card" data-name="Prescription Medicine Cover" data-price="4.99" data-cat="Health">
+              <div class="thumb" style="background-image:url('https://placehold.co/480x270?text=Medicine')"></div>
+              <div class="meta"><h3>Prescription Medicine Cover</h3><p>Offset monthly prescription costs.</p><div class="actions"><button class="btn btn-primary policy-add">Add $4.99/mo</button></div></div>
+            </article>
+            <article class="nf-card" data-name="Chronic Illness Add-On" data-price="8.49" data-cat="Health">
+              <div class="thumb" style="background-image:url('https://placehold.co/480x270?text=Chronic+Illness')"></div>
+              <div class="meta"><h3>Chronic Illness Add‑On</h3><p>Extra support for long-term conditions.</p><div class="actions"><button class="btn btn-primary policy-add">Add $8.49/mo</button></div></div>
+            </article>
+          </div>
+        </div>
+
+        <!-- Car Row -->
+        <div class="nf-row" id="row-car">
+          <div class="nf-row-head"><h2>Car</h2></div>
+          <div class="nf-scroller">
+            <article class="nf-card" data-name="Accident Repair Cover" data-price="11.99" data-cat="Car">
+              <div class="thumb" style="background-image:url('https://placehold.co/480x270?text=Accident+Repair')"></div>
+              <div class="meta"><h3>Accident Repair Cover</h3><p>Repairs after accidental damage.</p><div class="actions"><button class="btn btn-primary policy-add">Add $11.99/mo</button></div></div>
+            </article>
+            <article class="nf-card" data-name="Theft Protection" data-price="7.99" data-cat="Car">
+              <div class="thumb" style="background-image:url('https://placehold.co/480x270?text=Theft')"></div>
+              <div class="meta"><h3>Theft Protection</h3><p>Compensation if your car is stolen.</p><div class="actions"><button class="btn btn-primary policy-add">Add $7.99/mo</button></div></div>
+            </article>
+            <article class="nf-card" data-name="Roadside Assistance" data-price="3.99" data-cat="Car">
+              <div class="thumb" style="background-image:url('https://placehold.co/480x270?text=Roadside')"></div>
+              <div class="meta"><h3>Roadside Assistance</h3><p>Towing, jump-starts, and more.</p><div class="actions"><button class="btn btn-primary policy-add">Add $3.99/mo</button></div></div>
+            </article>
+            <article class="nf-card" data-name="Windscreen Cover" data-price="2.49" data-cat="Car">
+              <div class="thumb" style="background-image:url('https://placehold.co/480x270?text=Windscreen')"></div>
+              <div class="meta"><h3>Windscreen Cover</h3><p>Repairs or replaces your glass.</p><div class="actions"><button class="btn btn-primary policy-add">Add $2.49/mo</button></div></div>
+            </article>
+            <article class="nf-card" data-name="Rental Car Add-On" data-price="5.50" data-cat="Car">
+              <div class="thumb" style="background-image:url('https://placehold.co/480x270?text=Rental+Car')"></div>
+              <div class="meta"><h3>Rental Car Add‑On</h3><p>Temporary car while yours is repaired.</p><div class="actions"><button class="btn btn-primary policy-add">Add $5.50/mo</button></div></div>
+            </article>
+          </div>
+        </div>
+
+        <!-- Life Row -->
+        <div class="nf-row" id="row-life">
+          <div class="nf-row-head"><h2>Life</h2></div>
+          <div class="nf-scroller">
+            <article class="nf-card" data-name="Basic Life Cover" data-price="10.99" data-cat="Life">
+              <div class="thumb" style="background-image:url('https://placehold.co/480x270?text=Life+Cover')"></div>
+              <div class="meta"><h3>Basic Life Cover</h3><p>Financial support for your family.</p><div class="actions"><button class="btn btn-primary policy-add">Add $10.99/mo</button></div></div>
+            </article>
+            <article class="nf-card" data-name="Funeral Benefit" data-price="3.49" data-cat="Life">
+              <div class="thumb" style="background-image:url('https://placehold.co/480x270?text=Funeral')"></div>
+              <div class="meta"><h3>Funeral Benefit</h3><p>Helps with funeral expenses.</p><div class="actions"><button class="btn btn-primary policy-add">Add $3.49/mo</button></div></div>
+            </article>
+            <article class="nf-card" data-name="Disability Income Protection" data-price="12.49" data-cat="Life">
+              <div class="thumb" style="background-image:url('https://placehold.co/480x270?text=Disability+Income')"></div>
+              <div class="meta"><h3>Disability Income Protection</h3><p>Income if you can't work.</p><div class="actions"><button class="btn btn-primary policy-add">Add $12.49/mo</button></div></div>
+            </article>
+            <article class="nf-card" data-name="Family Dependents Add-On" data-price="4.50" data-cat="Life">
+              <div class="thumb" style="background-image:url('https://placehold.co/480x270?text=Dependents')"></div>
+              <div class="meta"><h3>Family Dependents Add‑On</h3><p>Extra support for dependents.</p><div class="actions"><button class="btn btn-primary policy-add">Add $4.50/mo</button></div></div>
+            </article>
+          </div>
+        </div>
+
+        <!-- Property Row -->
+        <div class="nf-row" id="row-property">
+          <div class="nf-row-head"><h2>Property</h2></div>
+          <div class="nf-scroller">
+            <article class="nf-card" data-name="Household Contents Cover" data-price="7.99" data-cat="Property">
+              <div class="thumb" style="background-image:url('https://placehold.co/480x270?text=Contents')"></div>
+              <div class="meta"><h3>Household Contents Cover</h3><p>Protects items in your home.</p><div class="actions"><button class="btn btn-primary policy-add">Add $7.99/mo</button></div></div>
+            </article>
+            <article class="nf-card" data-name="Fire & Flood" data-price="6.49" data-cat="Property">
+              <div class="thumb" style="background-image:url('https://placehold.co/480x270?text=Fire+%26+Flood')"></div>
+              <div class="meta"><h3>Fire & Flood</h3><p>Damage from fire or flooding.</p><div class="actions"><button class="btn btn-primary policy-add">Add $6.49/mo</button></div></div>
+            </article>
+            <article class="nf-card" data-name="Gadget Protection" data-price="5.99" data-cat="Property">
+              <div class="thumb" style="background-image:url('https://placehold.co/480x270?text=Gadgets')"></div>
+              <div class="meta"><h3>Gadget Protection</h3><p>Phones, laptops, wearables.</p><div class="actions"><button class="btn btn-primary policy-add">Add $5.99/mo</button></div></div>
+            </article>
+            <article class="nf-card" data-name="Appliance Breakdown" data-price="3.99" data-cat="Property">
+              <div class="thumb" style="background-image:url('https://placehold.co/480x270?text=Appliances')"></div>
+              <div class="meta"><h3>Appliance Breakdown</h3><p>White goods & electronics.</p><div class="actions"><button class="btn btn-primary policy-add">Add $3.99/mo</button></div></div>
+            </article>
+          </div>
+        </div>
+
+        <!-- Travel Row -->
+        <div class="nf-row" id="row-travel">
+          <div class="nf-row-head"><h2>Travel</h2></div>
+          <div class="nf-scroller">
+            <article class="nf-card" data-name="Medical While Abroad" data-price="8.99" data-cat="Travel">
+              <div class="thumb" style="background-image:url('https://placehold.co/480x270?text=Medical+Abroad')"></div>
+              <div class="meta"><h3>Medical While Abroad</h3><p>Emergency medical coverage.</p><div class="actions"><button class="btn btn-primary policy-add">Add $8.99/mo</button></div></div>
+            </article>
+            <article class="nf-card" data-name="Flight Delay Compensation" data-price="2.99" data-cat="Travel">
+              <div class="thumb" style="background-image:url('https://placehold.co/480x270?text=Flight+Delay')"></div>
+              <div class="meta"><h3>Flight Delay Compensation</h3><p>Payouts for delays & cancellations.</p><div class="actions"><button class="btn btn-primary policy-add">Add $2.99/mo</button></div></div>
+            </article>
+            <article class="nf-card" data-name="Lost Luggage" data-price="3.49" data-cat="Travel">
+              <div class="thumb" style="background-image:url('https://placehold.co/480x270?text=Lost+Luggage')"></div>
+              <div class="meta"><h3>Lost Luggage</h3><p>Reimbursement for lost bags.</p><div class="actions"><button class="btn btn-primary policy-add">Add $3.49/mo</button></div></div>
+            </article>
+            <article class="nf-card" data-name="Adventure Sports Add-On" data-price="4.99" data-cat="Travel">
+              <div class="thumb" style="background-image:url('https://placehold.co/480x270?text=Adventure+Sports')"></div>
+              <div class="meta"><h3>Adventure Sports Add‑On</h3><p>Cover for high‑adventure trips.</p><div class="actions"><button class="btn btn-primary policy-add">Add $4.99/mo</button></div></div>
+            </article>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sticky Policy Sidebar / Drawer -->
+      <aside id="policySidebar" aria-label="Your Policy">
+        <div class="ps-head">
+          <h3>Your Policy</h3>
+          <div class="muted">Build your cover visually.</div>
+        </div>
+        <div id="psItems" class="ps-items"></div>
+        <div class="ps-total"><span>Total per month</span><strong id="psTotal">$0.00</strong></div>
+        <button id="psFinalize" class="btn btn-primary" style="width:100%">Finalize Policy</button>
+      </aside>
+    </section>
+
+    <section class="newsletter">
+      <div class="container newsletter-inner" data-reveal>
+        <h3>Stay in the loop</h3>
+        <p>Subscribe to get UI updates and bot launch news. Demo only — no emails sent.</p>
+        <form class="inline-form" onsubmit="event.preventDefault(); alert('Thanks! This is a demo.');">
+          <input type="email" placeholder="you@example.com" aria-label="Email" required />
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <div class="logo">Demo<span>Insurance</span></div>
+        <p class="muted">Demo storefront. Placeholder images. No real purchases.</p>
+      </div>
+      <div class="footer-links">
+        <a href="about.html">About</a>
+        <a href="contact.html">Claims & Contact</a>
+        <a href="#insCategories">Build</a>
+      </div>
+    </div>
+    <div class="container tiny">© <span id="year"></span> DemoInsurance</div>
+  </footer>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/insurance-catalog.js"></script>
+  <script src="assets/js/insurance.js"></script>
+</body>
+</html>

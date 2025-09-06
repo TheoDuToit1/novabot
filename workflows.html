@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bot Workflows • Demo Shop</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <style>
+    .wf-container { max-width: 920px; margin: 40px auto; padding: 0 16px; }
+    .wf-header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 16px; }
+    .wf-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:14px; }
+    .wf-card { border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:14px; background: rgba(255,255,255,.04); }
+    .wf-title { font-size:16px; font-weight:600; margin:2px 0 8px; }
+    .wf-steps { font-size: 13px; opacity:.85; margin: 8px 0 0; line-height:1.5; display:none; }
+    .wf-actions { display:flex; gap:8px; margin-top:10px; flex-wrap: wrap; }
+    .muted { opacity:.72; }
+    .btn.small { padding:6px 10px; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <header class="container" style="padding:18px 16px">
+    <nav style="display:flex; justify-content:space-between; align-items:center">
+      <a href="index.html" class="btn btn-ghost">← Back</a>
+      <strong>Bot Workflows</strong>
+      <span></span>
+    </nav>
+  </header>
+
+  <main class="wf-container">
+    <div class="wf-header">
+      <div>
+        <h1 style="margin:0">Workflows</h1>
+        <div class="muted" style="margin-top:4px">Click a workflow to open the chatbot and run its steps automatically.</div>
+      </div>
+      <a href="#" id="wfRunAll" class="btn">Run All (Demo)</a>
+    </div>
+
+    <div id="wfGrid" class="wf-grid" aria-live="polite"></div>
+
+    <div id="wfEmpty" class="muted" style="display:none; margin-top:10px">No workflows available.</div>
+  </main>
+
+  <!-- App scripts -->
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script>
+  (function(){
+    function render(list){
+      const grid = document.getElementById('wfGrid');
+      const empty = document.getElementById('wfEmpty');
+      grid.innerHTML = '';
+      if (!list || !Object.keys(list).length){ empty.style.display = 'block'; return; }
+      empty.style.display = 'none';
+      Object.entries(list).forEach(([id, wf])=>{
+        const card = document.createElement('article');
+        card.className = 'wf-card';
+        const title = (wf && (wf.title||id)) || id;
+        const steps = (wf && Array.isArray(wf.steps) ? wf.steps : []);
+        card.innerHTML = `
+          <div class="wf-title">${title}</div>
+          <div class="muted" style="font-size:13px">ID: <code>${id}</code></div>
+          <div class="wf-actions">
+            <button class="btn btn-primary small" data-run="${id}">Run</button>
+            <button class="btn small" data-toggle="${id}">View steps</button>
+          </div>
+          <div class="wf-steps" id="steps-${id}">${steps.map((s,i)=>`<div>${i+1}. ${s}</div>`).join('')}</div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function tryInit(){
+      if (!window.NOVA || !window.NOVA.workflows || !window.NOVA.trigger){
+        // try again shortly (app.js loads after data.js)
+        return setTimeout(tryInit, 120);
+      }
+      render(window.NOVA.workflows);
+
+      document.getElementById('wfGrid').addEventListener('click', (e)=>{
+        const run = e.target.closest('[data-run]');
+        const tog = e.target.closest('[data-toggle]');
+        if (run){ const id = run.getAttribute('data-run'); try { window.NOVA.trigger(id); } catch{} }
+        if (tog){ const id = tog.getAttribute('data-toggle'); const el = document.getElementById('steps-'+id); if (el) el.style.display = (el.style.display==='block'?'none':'block'); }
+      });
+
+      const runAll = document.getElementById('wfRunAll');
+      runAll.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const ids = Object.keys(window.NOVA.workflows||{});
+        if (!ids.length) return;
+        // Chain workflows: trigger each, separated by a gap
+        let i = 0;
+        const gap = 1600;
+        const next = ()=>{
+          if (i>=ids.length) return;
+          window.NOVA.trigger(ids[i++]);
+          setTimeout(next, gap);
+        };
+        next();
+      });
+    }
+
+    // Start after DOM
+    document.addEventListener('DOMContentLoaded', tryInit);
+  })();
+  </script>
+</body>
+</html>

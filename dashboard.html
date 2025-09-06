@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bot Dashboard</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <style>
+    .dash{padding:32px 0}
+    .dash h1{margin:0 0 8px; font-size:clamp(24px,3.6vw,34px)}
+    .dash .lead{color:var(--muted); margin-bottom:16px}
+    /* Two-column layout with fixed-width sidebar (only top-level grid) */
+    .dash > .grid.two{grid-template-columns:minmax(0,1fr) 360px; gap:24px; align-items:start}
+    @media (max-width:1100px){ .dash > .grid.two{grid-template-columns:1fr} }
+    /* Inner layout for Widget + Features: stack vertically */
+    .grid.two.tight{display:grid; grid-template-columns:1fr; gap:16px}
+    .panel{background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:20px}
+    .panel > h3{margin:0 0 10px}
+    .stack{display:grid;gap:16px}
+    .row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+    .row > *{flex:1 1 240px; min-width:220px}
+    .mini{font-size:.95rem;color:var(--muted)}
+    .list{display:grid;gap:10px; max-height:calc(100vh - 220px); overflow:auto; padding-right:4px}
+    .item{display:grid;gap:8px;padding:12px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:rgba(255,255,255,.04);transition:transform .12s ease, box-shadow .2s ease}
+    .item:hover{transform:translateY(-2px); box-shadow:0 10px 24px rgba(0,0,0,.25)}
+    .item .head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;font-size:.78rem;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06)}
+    .badge.active{background:linear-gradient(135deg,var(--accent-2),#7dd3fc); color:#061225; border-color:transparent}
+    label span{font-size:.9rem;color:var(--muted)}
+    input[type="text"], input[type="url"], input[type="color"], select, textarea{border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.25);color:var(--text);border-radius:10px;padding:12px;width:100%}
+    textarea{min-height:120px}
+    .chips{display:flex;flex-wrap:wrap;gap:6px}
+    .chip{padding:6px 10px;border:1px solid rgba(255,255,255,.14);border-radius:999px;font-size:.85rem}
+    .swatch{display:inline-block;width:14px;height:14px;border-radius:4px;border:1px solid rgba(255,255,255,.2);vertical-align:middle;margin-right:6px}
+    .kbd{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);padding:2px 6px;border-radius:6px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+    pre{background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.12);padding:12px;border-radius:10px;overflow:auto}
+    .muted small{opacity:.8}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    /* Center actions inside bot list cards */
+    .list .item .actions{justify-content:center}
+    .aside-sticky{position:sticky; top:86px}
+    .hint{font-size:.85rem; color:var(--muted)}
+    .divider{height:1px; background:rgba(255,255,255,.08); margin:2px 0 8px}
+    /* Disabled editor overlay */
+    #editorPane{ position:relative }
+    #editorPane.disabled > *:not(#editorOverlay){ filter: blur(2px); pointer-events:none; user-select:none }
+    #editorOverlay{ position:absolute; inset:0; display:none; align-items:center; justify-content:center; text-align:center; background:rgba(0,0,0,.55); backdrop-filter:saturate(120%) blur(3px); border-radius:16px; z-index:5; padding:20px }
+    #editorPane.disabled #editorOverlay{ display:flex }
+    #editorOverlay .warn{ display:flex; gap:10px; align-items:center; font-weight:800; color:#0b0f1a; background: #facc15; padding:10px 14px; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,.35) }
+    #editorOverlay .warn .icon{ font-size:18px }
+    /* Live preview mini widget */
+    .mini-preview{background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden}
+    .mini-preview .head{display:flex;align-items:center;gap:10px;padding:12px}
+    .mini-preview .avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.1);font-weight:800}
+    .mini-preview .body{padding:12px;display:grid;gap:10px;background:rgba(255,255,255,.02)}
+    .mini-preview .bubble{max-width:82%;padding:10px 12px;border-radius:12px;font-size:.92rem;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04)}
+    .mini-preview .bubble.user{margin-left:auto;background:linear-gradient(135deg,var(--accent-2),#7dd3fc);color:#061225;border-color:transparent}
+    /* Features grid as lifted cards */
+    .feature-toggles{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+    .feature-card{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.25);transition:transform .15s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease}
+
+    /* Delete confirmation modal */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(2px);display:none;align-items:center;justify-content:center;z-index:100000}
+    .modal{background:#0b0f1a;border:1px solid rgba(255,255,255,.12);border-radius:14px;min-width:320px;max-width:92vw;padding:16px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+    .modal .title{display:flex;align-items:center;gap:8px;font-weight:800;margin-bottom:8px}
+    .modal .title .icon{background:#facc15;color:#0b0f1a;border-radius:8px;padding:6px 8px}
+    .modal .body{color:var(--muted);margin-bottom:14px}
+    .modal .actions{display:flex;gap:10px;justify-content:flex-end}
+    .btn{padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:#1b2436;color:#e8ecf1;cursor:pointer}
+    .btn.danger{background:#ef4444;border-color:#ef4444;color:#0b0f1a}
+    .btn.ghost{background:transparent}
+
+    /* Collapsible sections */
+    .collapsible{position:relative}
+    .collapsible-head{display:flex;align-items:center;justify-content:space-between;gap:10px;user-select:none}
+    .collapse-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);cursor:pointer;transition:background .2s ease, border-color .2s ease}
+    .collapse-btn:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.22)}
+    .collapse-btn .chev{transition:transform .25s ease}
+    .collapsible-body{overflow:hidden;transition:max-height .3s ease, opacity .25s ease; opacity:1}
+    .collapsible.is-collapsed .collapsible-body{max-height:0 !important; opacity:0; visibility:hidden}
+    .collapsible.is-collapsed .collapse-btn .chev{transform:rotate(-90deg)}
+    .feature-card:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.3)}
+    .feature-card:has(input:checked){border-color:rgba(255,255,255,.12); background:rgba(255,255,255,.04); box-shadow:0 2px 10px rgba(0,0,0,.25)}
+    /* From Uiverse.io by boryanakrasteva */
+    .checkbox-btn{display:inline-block;position:relative;padding-left:34px;margin:0;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+    .checkbox-btn input{position:absolute;opacity:0;cursor:pointer;height:0;width:0}
+    .checkbox-btn label{cursor:pointer;font-size:14px}
+    .checkmark{position:absolute;top:0;left:0;height:25px;width:25px;border:2.5px solid #ffffff;transition:.2s linear}
+    .checkbox-btn input:checked ~ .checkmark{background-color:transparent}
+    .checkmark:after{content:"";position:absolute;visibility:hidden;opacity:0;left:50%;top:40%;width:10px;height:14px;border:2px solid #0ea021;border-width:0 2.5px 2.5px 0;transition:.2s linear;transform:translate(-50%, -50%) rotate(-90deg) scale(0.2)}
+    .checkbox-btn input:checked ~ .checkmark:after{visibility:visible;opacity:1;transform:translate(-50%, -50%) rotate(0deg) scale(1);animation:pulse 1s ease-in}
+    .checkbox-btn input:checked ~ .checkmark{transform:rotate(45deg);border:none}
+    @keyframes pulse{0%,100%{transform:translate(-50%, -50%) rotate(0deg) scale(1)}50%{transform:translate(-50%, -50%) rotate(0deg) scale(1.6)}}
+    .checkbox-btn .text{margin-left:8px;vertical-align:middle}
+
+    /* From Uiverse.io by vinodjangid07 - Delete (bin) button */
+    .bin-button{display:flex;flex-direction:column;align-items:center;justify-content:center;width:55px;height:55px;border-radius:15px;background-color:rgb(255,95,95);cursor:pointer;border:3px solid rgb(255,201,201);transition-duration:.3s}
+    .bin-bottom{width:15px}
+    .bin-top{width:17px;transform-origin:right;transition-duration:.3s}
+    .bin-button:hover .bin-top{transform:rotate(45deg)}
+    .bin-button:hover{background-color:rgb(255,0,0)}
+    .bin-button:active{transform:scale(.9)}
+
+    /* From Uiverse.io by vinodjangid07 - Edit button */
+    .editBtn{width:55px;height:55px;border-radius:20px;border:none;background-color:rgb(93,93,116);display:flex;align-items:center;justify-content:center;box-shadow:0 5px 10px rgba(0,0,0,.123);cursor:pointer;position:relative;overflow:hidden;transition:all .3s}
+    .editBtn::before{content:"";width:200%;height:200%;background-color:rgb(102,102,141);position:absolute;z-index:1;transform:scale(0);transition:all .3s;border-radius:50%;filter:blur(10px)}
+    .editBtn:hover::before{transform:scale(1)}
+    .editBtn:hover{box-shadow:0 5px 10px rgba(0,0,0,.336)}
+    .editBtn svg{height:17px;fill:#fff;z-index:3;transition:all .2s;transform-origin:bottom}
+    .editBtn:hover svg{transform:rotate(-15deg) translateX(5px)}
+    .editBtn::after{content:"";width:25px;height:1.5px;position:absolute;bottom:19px;left:-5px;background-color:#fff;border-radius:2px;z-index:2;transform:scaleX(0);transform-origin:left;transition:transform .5s ease-out}
+    .editBtn:hover::after{transform:scaleX(1);left:0;transform-origin:right}
+
+    /* From Uiverse.io by Galahhad - Copy button with tooltip */
+    .copy{--button-bg:#353434;--button-hover-bg:#464646;--button-text-color:#CCCCCC;--button-hover-text-color:#8bb9fe;--button-border-radius:15px;--button-diameter:55px;--button-outline-width:1px;--button-outline-color:rgb(141,141,141);--tooltip-bg:#f4f3f3;--toolptip-border-radius:4px;--tooltip-font-family:Menlo,Roboto Mono,monospace;--tooltip-font-size:12px;--tootip-text-color:rgb(50,50,50);--tooltip-padding-x:7px;--tooltip-padding-y:7px;--tooltip-offset:8px;box-sizing:border-box;width:var(--button-diameter);height:var(--button-diameter);border-radius:var(--button-border-radius);background-color:var(--button-bg);color:var(--button-text-color);border:none;cursor:pointer;position:relative;outline:none}
+    .tooltip{position:absolute;opacity:0;visibility:0;top:0;left:50%;transform:translateX(-50%);white-space:nowrap;font:var(--tooltip-font-size) var(--tooltip-font-family);color:var(--tootip-text-color);background:var(--tooltip-bg);padding:var(--tooltip-padding-y) var(--tooltip-padding-x);border-radius:var(--toolptip-border-radius);pointer-events:none;transition:all var(--tooltip-transition-duration) cubic-bezier(0.68,-0.55,0.265,1.55)}
+    .tooltip::before{content:attr(data-text-initial)}
+    .tooltip::after{content:"";position:absolute;bottom:calc(var(--tooltip-padding-y)/2 * -1);width:var(--tooltip-padding-y);height:var(--tooltip-padding-y);background:inherit;left:50%;transform:translateX(-50%) rotate(45deg);z-index:-999;pointer-events:none}
+    .copy svg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+    /* Scope to copy button so feature checkboxes remain visible */
+    .copy .checkmark{display:none}
+    .copy:hover .tooltip,.copy:focus:not(:focus-visible) .tooltip{opacity:1;visibility:visible;top:calc((100% + var(--tooltip-offset)) * -1)}
+    .copy:focus:not(:focus-visible) .tooltip::before{content:attr(data-text-end)}
+    .copy:focus:not(:focus-visible) .clipboard{display:none}
+    .copy:focus:not(:focus-visible) .checkmark{display:block}
+    .copy:hover,.copy:focus{background-color:var(--button-hover-bg)}
+    .copy:active{outline:var(--button-outline-width) solid var(--button-outline-color)}
+    .copy:hover svg{color:var(--button-hover-text-color)}
+
+    /* Themed Copy button under embed snippet (scoped) */
+    .Btn{width:120px;height:45px;background-color:#414040;border:none;box-shadow:5px 5px 15px rgba(0,0,0,.34);border-radius:5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;position:relative;overflow:hidden;transition-duration:.5s}
+    .Btn .text{color:var(--accent-2, #60a5fa);font-weight:800;letter-spacing:1.1px;z-index:2}
+    .Btn .svgIcon{z-index:2}
+    .Btn .svgIcon path{fill:var(--accent-2, #60a5fa)}
+    .Btn:hover{color:rgb(230,255,193); background-color: var(--accent-2, #60a5fa)}
+    .Btn .effect{position:absolute;width:10px;height:10px;background-color:var(--accent-2, #60a5fa);border-radius:50%;z-index:1;opacity:0;transition-duration:.5s}
+    .Btn:hover .effect{transform:scale(15);transform-origin:center;opacity:1;transition-duration:.5s}
+    .Btn:hover{box-shadow:0 0 5px var(--accent-2, #60a5fa), 0 0 10px var(--accent-2, #60a5fa), 0 0 30px var(--accent-2, #60a5fa);transition-duration:.7s}
+    .Btn:hover .text{color:#414040}
+    .Btn:hover .svgIcon path{fill:#414040}
+
+    /* Fine-tune primary action buttons */
+    #btnGen .text, #btnSave .text, #btnTogglePreview .text, #btnSavePreset .text{ font-size: calc(1em - 1px); }
+
+    /* Save buttons: neutral by default; turn green on hover */
+    #btnSave:hover, #btnSavePreset:hover{
+      background-color: var(--accent, #6ee7b7);
+      box-shadow: 0 0 5px var(--accent, #6ee7b7), 0 0 10px var(--accent, #6ee7b7), 0 0 30px var(--accent, #6ee7b7);
+    }
+    #btnSave:hover .effect, #btnSavePreset:hover .effect{ background-color: var(--accent, #6ee7b7); }
+
+    /* Narrower width for Save as preset */
+    #btnSavePreset{ width:auto; padding:0 10px; }
+    #btnSavePreset .svgIcon{ display:none; }
+    #btnSavePreset .text{ letter-spacing:.6px; }
+
+    /* Tighter layout for API Key row so buttons fit */
+    .row:has(#fKey) label{ flex: 1 1 420px; max-width: 560px; }
+    .row:has(#fKey) .actions{ flex: 0 0 auto; display:flex; flex-wrap:nowrap; gap:10px; justify-content:flex-start }
+
+    /* Ensure 'Preview Widget' button shows icon and text side-by-side */
+    #btnTogglePreview{ width: 180px; }
+    #btnTogglePreview .text{ white-space: nowrap; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="logo">Nova<span>Bot</span> Dashboard</div>
+      <nav class="nav">
+        <a href="index.html">Home</a>
+        <a href="products.html">Products</a>
+        <a href="workflows.html">Workflows</a>
+        <a href="dashboard.html" class="active">Dashboard</a>
+      </nav>
+      <a class="cart-link" href="cart.html"><span>Cart</span> <span id="cartCount" class="cart-count">0</span></a>
+    </div>
+  </header>
+  <div class="header-spacer"></div>
+
+  <main class="container dash">
+    <div class="section-head">
+      <div>
+        <h1>NovaBot Dashboard</h1>
+        <div class="lead">Create and manage bots per site. Customize the widget theme and generate API keys & embed code.</div>
+      </div>
+    </div>
+
+    <div class="grid two">
+      <section id="editorPane" class="panel stack">
+        <div id="editorOverlay" aria-hidden="true">
+          <div class="warn"><span class="icon">⚠</span><span>Select a bot to edit</span></div>
+        </div>
+        <h3>Create / Edit Bot</h3>
+        <div class="row">
+          <label>
+            <span>Bot name</span>
+            <input id="fName" type="text" placeholder="e.g., Day1Health" />
+            <div class="hint">This is displayed as the assistant’s name in the chat header.</div>
+          </label>
+          <label>
+            <span>Site origin</span>
+            <input id="fOrigin" type="url" placeholder="https://www.example.com" />
+            <div class="hint">Used for identifying the site. Optional for local testing.</div>
+          </label>
+        </div>
+        <div class="row">
+          <label>
+            <span>API Key</span>
+            <input id="fKey" type="text" placeholder="Click Generate" readonly />
+            <div class="hint">Keep this secret. Use it in your embed to fetch public config and data.</div>
+          </label>
+          <div class="actions">
+            <button class="Btn" id="btnGen" title="Generate API Key">
+              <svg viewBox="0 0 512 512" class="svgIcon" height="1em" aria-hidden="true"><path d="M288 448H64V224h64V160H64c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H288c35.3 0 64-28.7 64-64V384H288v64zm-64-96H448c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H224c-35.3 0-64 28.7-64 64V288c0 35.3 28.7 64 64 64z"></path></svg>
+              <p class="text">Generate</p>
+              <span class="effect"></span>
+            </button>
+            <button class="Btn" id="btnSave" title="Save this bot">
+              <svg viewBox="0 0 512 512" class="svgIcon" height="1em" aria-hidden="true"><path d="M288 448H64V224h64V160H64c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H288c35.3 0 64-28.7 64-64V384H288v64zm-64-96H448c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H224c-35.3 0-64 28.7-64 64V288c0 35.3 28.7 64 64 64z"></path></svg>
+              <p class="text">Save Bot</p>
+              <span class="effect"></span>
+            </button>
+            <button class="Btn" id="btnIntegrations" title="Configure integrations" style="width:auto; padding:0 10px">
+              <svg viewBox="0 0 512 512" class="svgIcon" height="1em" aria-hidden="true"><path d="M224 32h64v64h-64zM32 224h64v64H32zM416 224h64v64h-64zM224 416h64v64h-64zM96 96l45.3 45.3-45.3 45.3L50.7 141.3zM416 370.7l45.3 45.3-45.3 45.3L370.7 416zM370.7 50.7 416 96l-45.3 45.3L325.3 96zM96 370.7 141.3 416l-45.3 45.3L50.7 416z"></path></svg>
+              <p class="text">Integrations</p>
+              <span class="effect"></span>
+            </button>
+            <button class="Btn" id="btnTogglePreview" title="Preview the widget with current settings">
+              <svg viewBox="0 0 512 512" class="svgIcon" height="1em" aria-hidden="true"><path d="M288 448H64V224h64V160H64c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H288c35.3 0 64-28.7 64-64V384H288v64zm-64-96H448c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H224c-35.3 0-64 28.7-64 64V288c0 35.3 28.7 64 64 64z"></path></svg>
+              <p class="text">Preview Widget</p>
+              <span class="effect"></span>
+            </button>
+          </div>
+        </div>
+        <div class="grid two tight">
+          <div class="panel stack">
+            <strong>Widget</strong>
+            <label>
+              <span>Theme Preset</span>
+              <select id="themePreset">
+                <option value="custom">Custom</option>
+                <option value="blue">Blue (Default)</option>
+                <option value="purple">Purple Glow</option>
+                <option value="green">Emerald</option>
+                <option value="sunset">Sunset</option>
+                <option value="charcoal">Charcoal</option>
+              </select>
+            </label>
+            <div class="row" style="align-items:center; gap:.5rem; margin-top:.25rem;">
+              <button class="Btn" id="btnSavePreset" title="Save current theme as a new preset">
+                <svg viewBox="0 0 512 512" class="svgIcon" height="1em" aria-hidden="true"><path d="M288 448H64V224h64V160H64c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H288c35.3 0 64-28.7 64-64V384H288v64zm-64-96H448c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H224c-35.3 0-64 28.7-64 64V288c0 35.3 28.7 64 64 64z"></path></svg>
+                <p class="text">Save as preset</p>
+                <span class="effect"></span>
+              </button>
+              <small class="muted">Presets appear below. Click to apply.</small>
+            </div>
+            <div id="presetGallery" class="preset-gallery" style="display:grid; grid-template-columns: repeat(6, minmax(80px,1fr)); gap:.5rem; margin:.5rem 0 1rem;">
+              <!-- thumbnails rendered by JS -->
+            </div>
+            <label>
+              <span>Position</span>
+              <select id="fPos">
+                <option value="bottom-right">Bottom Right</option>
+                <option value="bottom-left">Bottom Left</option>
+                <option value="top-right">Top Right</option>
+                <option value="top-left">Top Left</option>
+              </select>
+            </label>
+            <div class="row">
+              <label>
+                <span>Primary color</span>
+                <input id="fPrimary" type="color" value="#60a5fa" />
+                <div class="hint"><span class="swatch" id="swPrimary"></span><span class="kbd" id="valPrimary">#60a5fa</span> — Affects the user bubble and toggle button.</div>
+              </label>
+              <label>
+                <span>Accent color</span>
+                <input id="fAccent" type="color" value="#6ee7b7" />
+                <div class="hint"><span class="swatch" id="swAccent"></span><span class="kbd" id="valAccent">#6ee7b7</span> — Secondary highlights for chips and accents.</div>
+              </label>
+            </div>
+            <div class="row">
+              <label>
+                <span>Header BG</span>
+                <input id="fHeaderBg" type="color" value="#111827" />
+                <div class="hint"><span class="swatch" id="swHeaderBg"></span><span class="kbd" id="valHeaderBg">#111827</span></div>
+              </label>
+              <label>
+                <span>Header Text</span>
+                <input id="fHeaderText" type="color" value="#ffffff" />
+                <div class="hint"><span class="swatch" id="swHeaderText"></span><span class="kbd" id="valHeaderText">#ffffff</span></div>
+              </label>
+            </div>
+            <div class="row">
+              <label>
+                <span>Bot Bubble</span>
+                <input id="fBubbleBot" type="color" value="#1f2937" />
+                <div class="hint"><span class="swatch" id="swBubbleBot"></span><span class="kbd" id="valBubbleBot">#1f2937</span></div>
+              </label>
+              <label>
+                <span>User Bubble</span>
+                <input id="fBubbleUser" type="color" value="#2563eb" />
+                <div class="hint"><span class="swatch" id="swBubbleUser"></span><span class="kbd" id="valBubbleUser">#2563eb</span></div>
+              </label>
+            </div>
+            <div class="row">
+              <label>
+                <span>Panel Background</span>
+                <input id="fPanelBg" type="color" value="#0b0f1a" />
+                <div class="hint"><span class="swatch" id="swPanelBg"></span><span class="kbd" id="valPanelBg">#0b0f1a</span></div>
+              </label>
+              <label>
+                <span>Corner Radius (px)</span>
+                <input id="fRadius" type="number" min="8" max="28" value="14" />
+              </label>
+            </div>
+            <label>
+              <span>Avatar (emoji or URL)</span>
+              <input id="fAvatar" type="text" placeholder="e.g., 🤖 or https://.../avatar.png" />
+              <div class="hint">Use a single emoji or an image URL.</div>
+            </label>
+          </div>
+          <div class="panel stack">
+            <strong>Features</strong>
+            <div class="feature-toggles">
+              <div class="feature-card">
+                <label class="checkbox-btn">
+                  <input id="featPromos" type="checkbox" checked />
+                  <span class="checkmark"></span>
+                  <span class="text">Promos</span>
+                </label>
+              </div>
+              <div class="feature-card">
+                <label class="checkbox-btn">
+                  <input id="featUpsell" type="checkbox" checked />
+                  <span class="checkmark"></span>
+                  <span class="text">Upsell</span>
+                </label>
+              </div>
+              <div class="feature-card">
+                <label class="checkbox-btn">
+                  <input id="featReco" type="checkbox" checked />
+                  <span class="checkmark"></span>
+                  <span class="text">Recommendations</span>
+                </label>
+              </div>
+              <div class="feature-card">
+                <label class="checkbox-btn">
+                  <input id="featVoiceInput" type="checkbox" />
+                  <span class="checkmark"></span>
+                  <span class="text">Voice Input (Mic)</span>
+                </label>
+              </div>
+              <div class="feature-card">
+                <label class="checkbox-btn">
+                  <input id="featVoiceOutput" type="checkbox" />
+                  <span class="checkmark"></span>
+                  <span class="text">Voice Output (TTS)</span>
+                </label>
+              </div>
+              <div class="feature-card">
+                <label class="checkbox-btn">
+                  <input id="featSmallTalk" type="checkbox" checked />
+                  <span class="checkmark"></span>
+                  <span class="text">Small Talk</span>
+                </label>
+              </div>
+            </div>
+            <label>
+              <span>First Message</span>
+              <textarea id="fFirstMsg" placeholder="Hi! I’m Nova. How can I help you today?"></textarea>
+              <div class="hint">Shown the first time the chat opens (respects chat history). Use HTML for formatting.</div>
+            </label>
+            <label>
+              <span>Knowledge Base</span>
+              <textarea id="fKB" placeholder="Paste reference text here (FAQs, policies, how‑tos). The bot will answer from this before using AI."></textarea>
+              <div class="hint">Free‑form text. Nova will try to extract a concise answer from here first.</div>
+            </label>
+            <label>
+              <span>Custom Fallback Message</span>
+              <input id="fFallback" type="text" placeholder="Sorry, I don’t have that info. Try asking about coverage, claims, or pricing." />
+              <div class="hint">Used when no Knowledge Base match is found. If empty, Nova falls back to AI.</div>
+            </label>
+          </div>
+          <div class="panel stack">
+            <strong>Products</strong>
+            <div class="hint">Manage products that the bot can show in a carousel. Columns: Image URL, Title, Description, Price.</div>
+            <div class="row" style="align-items:flex-end">
+              <label>
+                <span>Google Sheets CSV URL</span>
+                <input id="prodSheetsUrl" type="url" placeholder="Paste a public CSV link or Google Sheets link" />
+                <div class="hint">Supports Google Sheets. Make the sheet public or shareable. We’ll convert the link to CSV automatically.</div>
+              </label>
+              <div class="actions" style="align-items:flex-end">
+                <button class="Btn" id="btnImportSheets" title="Import from Google Sheets">
+                  <svg viewBox="0 0 512 512" class="svgIcon" height="1em" aria-hidden="true"><path d="M64 64h224l96 96v288c0 17.7-14.3 32-32 32H64c-17.7 0-32-14.3-32-32V96c0-17.7 14.3-32 32-32zm240 32H80v336h288V176H304c-17.7 0-32-14.3-32-32V96z"></path></svg>
+                  <p class="text">Import</p>
+                  <span class="effect"></span>
+                </button>
+                <label class="btn" style="margin-left:8px">
+                  <input id="prodCsvFile" type="file" accept=".csv" style="display:none" />
+                  <span>Upload CSV</span>
+                </label>
+                <button class="Btn" id="btnAddProduct" title="Add a product row" style="width:auto; padding:0 10px">
+                  <svg viewBox="0 0 512 512" class="svgIcon" height="1em" aria-hidden="true"><path d="M256 112c13.3 0 24 10.7 24 24V232H376c13.3 0 24 10.7 24 24s-10.7 24-24 24H280V400c0 13.3-10.7 24-24 24s-24-10.7-24-24V280H136c-13.3 0-24-10.7-24-24s10.7-24 24-24h96V136c0-13.3 10.7-24 24-24z"></path></svg>
+                  <p class="text">Add Product</p>
+                  <span class="effect"></span>
+                </button>
+              </div>
+            </div>
+            <div id="productsList" class="stack" style="gap:10px">
+              <!-- rows injected by JS: .prod-row -->
+            </div>
+            <div class="hint">CSV columns (header optional): image,title,description,price</div>
+          </div>
+        </div>
+        <div class="panel stack">
+          <strong>Embed snippet</strong>
+          <div class="mini">Place before <span class="kbd">&lt;/body&gt;</span> on your site.</div>
+          <pre><code id="embedCode">// save a bot to generate embed code</code></pre>
+          <div class="actions">
+            <!-- From Uiverse.io by vinodjangid07 (themed) -->
+            <button class="Btn" id="btnCopy" title="Copy embed code">
+              <svg viewBox="0 0 512 512" class="svgIcon" height="1em" aria-hidden="true">
+                <path d="M288 448H64V224h64V160H64c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H288c35.3 0 64-28.7 64-64V384H288v64zm-64-96H448c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H224c-35.3 0-64 28.7-64 64V288c0 35.3 28.7 64 64 64z"></path>
+              </svg>
+              <p class="text">COPY</p>
+              <span class="effect"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="panel stack">
+          <strong>Live Preview</strong>
+          <div id="livePreview" class="mini-preview">
+            <div class="head" id="lpHead">
+              <div class="avatar" id="lpAvatar">N</div>
+              <div class="meta">
+                <div class="title" id="lpTitle">NovaBot</div>
+                <div class="tiny" id="lpSubtitle">Assistant</div>
+              </div>
+            </div>
+            <div class="body" id="lpBody">
+              <div class="bubble bot" id="lpBotBubble">Hi! I’m your assistant.</div>
+              <div class="bubble user" id="lpUserBubble">Show me gadgets</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel stack aside-sticky">
+        <div class="collapsible-head" style="margin-bottom:6px;">
+          <h3 style="margin:0">Bots</h3>
+          <button class="Btn" id="btnCreateBot" title="Create a new bot" style="width:auto; padding:0 10px">
+            <svg viewBox="0 0 512 512" class="svgIcon" height="1em" aria-hidden="true"><path d="M256 112c13.3 0 24 10.7 24 24V232H376c13.3 0 24 10.7 24 24s-10.7 24-24 24H280V400c0 13.3-10.7 24-24 24s-24-10.7-24-24V280H136c-13.3 0-24-10.7-24-24s10.7-24 24-24h96V136c0-13.3 10.7-24 24-24z"></path></svg>
+            <p class="text">Create bot</p>
+            <span class="effect"></span>
+          </button>
+        </div>
+        <div class="mini">Bots are synced with the backend when available; falls back to local storage if offline.</div>
+        <label>
+          <span>Search</span>
+          <input id="botSearch" type="text" placeholder="Search bots by name or origin" />
+        </label>
+        <label>
+          <span>Sort</span>
+          <select id="botSort">
+            <option value="active">Active first</option>
+            <option value="name-asc">Name A → Z</option>
+            <option value="name-desc">Name Z → A</option>
+          </select>
+        </label>
+        <div id="list" class="list"></div>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    // Backend config for dashboard
+    window.NOVABOT_API_BASE = window.NOVABOT_API_BASE || 'http://localhost:5050';
+    window.NOVABOT_ADMIN_KEY = window.NOVABOT_ADMIN_KEY || 'dev-admin-key';
+  </script>
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/dashboard.js"></script>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="delModal" class="modal-overlay" style="display:none" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="delTitle">
+      <div class="title" id="delTitle">
+        <span class="icon">⚠</span>
+        <span>Delete bot?</span>
+      </div>
+      <div class="body">Are you sure you want to delete <strong id="delBotName">this bot</strong>? This action cannot be undone.</div>
+      <div class="actions">
+        <button id="delCancel" class="btn ghost" type="button">Cancel</button>
+        <button id="delConfirm" class="btn danger" type="button">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Integrations: Supabase Modal -->
+  <div id="supModal" class="modal-overlay" style="display:none" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="supTitle">
+      <div class="title" id="supTitle">
+        <span class="icon">🔗</span>
+        <span>Supabase Integration</span>
+      </div>
+      <div class="body">
+        <div class="stack" style="gap:10px">
+          <label>
+            <span>Supabase URL</span>
+            <input id="supUrl" type="url" placeholder="https://YOUR-PROJECT.supabase.co" />
+          </label>
+          <label>
+            <span>Service Role Key (preferred)</span>
+            <input id="supServiceKey" type="text" placeholder="Paste your service role key (keep secret)" />
+            <div class="hint">Stored with the bot config. Keep this secure. Use Anon/Public key if service key is unavailable.</div>
+          </label>
+          <label>
+            <span>Anon/Public Key (optional)</span>
+            <input id="supAnonKey" type="text" placeholder="Paste your anon/public key" />
+          </label>
+          <div id="supStatus" class="mini" aria-live="polite"></div>
+          <pre id="supMeta" class="mini" style="max-height:200px; overflow:auto; background:rgba(0,0,0,.25); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,.1)"></pre>
+        </div>
+      </div>
+      <div class="actions">
+        <button id="supList" class="btn" type="button">List Tables</button>
+        <button id="supTest" class="btn" type="button">Test Connection</button>
+        <button id="supSave" class="btn" type="button">Save</button>
+        <button id="supCancel" class="btn ghost" type="button">Cancel</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

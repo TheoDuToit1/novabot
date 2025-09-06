@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Demo Insurance · Claims & Contact</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">Demo<span>Insurance</span></a>
+      <nav class="nav">
+        <a href="index.html#insCategories">Build</a>
+        <a href="about.html">About</a>
+        <a class="active" href="contact.html">Claims & Contact</a>
+      </nav>
+      
+    </div>
+  </header>
+
+  <main>
+    <section class="container section">
+      <div class="contact-banner" data-reveal>
+        <img src="https://placehold.co/1200x360?text=Map+or+Banner" alt="Map or banner" />
+      </div>
+    </section>
+
+    <section class="container section contact-grid">
+      <div class="contact-card card" data-reveal>
+        <div class="body">
+          <div class="title">Claims & Contact</div>
+          <p class="muted">This is a demo. Use the form or the details below; no messages are actually sent.</p>
+          <div class="contact-info">
+            <div><strong>Email:</strong> hello@demoinsurance.example</div>
+            <div><strong>Phone:</strong> (000) 123‑4567</div>
+            <div><strong>Hours:</strong> Mon–Fri, 9:00–17:00</div>
+            <div><strong>Address:</strong> 123 Demo Street, Web City</div>
+          </div>
+          <div class="socials">
+            <a href="#" aria-label="Twitter" class="social">Twitter</a>
+            <a href="#" aria-label="Instagram" class="social">Instagram</a>
+            <a href="#" aria-label="GitHub" class="social">GitHub</a>
+          </div>
+        </div>
+      </div>
+
+      <form class="contact-form card" onsubmit="event.preventDefault(); alert('Thanks! This is a demo.');" data-reveal>
+        <div class="body">
+          <h1 style="margin:0 0 6px">Claims & Contact</h1>
+          <p class="muted" style="margin:0 0 12px">Say hi — this form is a demo and does not send messages.</p>
+          <div class="grid two tight">
+            <label>Name<input type="text" required></label>
+            <label>Email<input type="email" required></label>
+          </div>
+          <label>Subject<input type="text" required></label>
+          <label>Message<textarea rows="6" required></textarea></label>
+          <div class="actions">
+            <button class="btn btn-primary" type="submit">Send</button>
+          </div>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container tiny">© <span id="year"></span> DemoInsurance</div>
+  </footer>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

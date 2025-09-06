@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Demo Insurance · About</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">Demo<span>Insurance</span></a>
+      <nav class="nav">
+        <a href="index.html#insCategories">Build</a>
+        <a class="active" href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      
+    </div>
+  </header>
+
+  <main>
+    <!-- About Hero -->
+    <section class="container section about-hero">
+      <div class="grid two">
+        <div data-reveal>
+          <a class="muted" href="index.html">← Home</a>
+          <h1>Design-first insurance demo</h1>
+          <p class="lead">A clean, cinematic policy builder showcasing a conversational insurance assistant. Placeholder images only. No real quotes or purchases.</p>
+          <div class="about-points">
+            <div>• Smooth micro-interactions</div>
+            <div>• Responsive, accessible layout</div>
+            <div>• Lightweight, no frameworks</div>
+          </div>
+        </div>
+        <div data-reveal>
+          <img src="https://placehold.co/880x620?text=About+Hero" alt="About hero" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="container section about-stats" aria-label="Site stats">
+      <div class="stats" data-reveal>
+        <div class="stat"><div class="num">8</div><div class="label">Pages</div></div>
+        <div class="stat"><div class="num">25+</div><div class="label">Insurance modules</div></div>
+        <div class="stat"><div class="num">0</div><div class="label">Real purchases</div></div>
+        <div class="stat"><div class="num">100%</div><div class="label">Placeholder media</div></div>
+      </div>
+    </section>
+
+    <!-- Values -->
+    <section class="container section about-values">
+      <div class="section-head">
+        <h2>What this demo focuses on</h2>
+      </div>
+      <div class="grid values">
+        <article class="card" data-reveal>
+          <div class="body">
+            <div class="title">Clarity</div>
+            <p class="muted">Minimal visuals and readable typography so the bot experience can shine.</p>
+          </div>
+        </article>
+        <article class="card" data-reveal>
+          <div class="body">
+            <div class="title">Motion</div>
+            <p class="muted">Subtle scroll-reveal and micro-interactions for a lively feel.</p>
+          </div>
+        </article>
+        <article class="card" data-reveal>
+          <div class="body">
+            <div class="title">Speed</div>
+            <p class="muted">Static assets and lean JS. No frameworks or heavy dependencies.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Timeline -->
+    <section class="container section about-timeline">
+      <div class="section-head">
+        <h2>Roadmap</h2>
+      </div>
+      <ol class="timeline" data-reveal>
+        <li>
+          <span class="dot"></span>
+          <div>
+            <strong>v0: Policy Builder UI</strong>
+            <p class="muted">Build hero, category rows, policy drawer, and checkout summary.</p>
+          </div>
+        </li>
+        <li>
+          <span class="dot"></span>
+          <div>
+            <strong>v1: Conversational assistant</strong>
+            <p class="muted">Integrate an on-site bot for guided policy recommendations and support.</p>
+          </div>
+        </li>
+        <li>
+          <span class="dot"></span>
+          <div>
+            <strong>v2: Personalization</strong>
+            <p class="muted">Recommend coverage and automate common insurance flows with the assistant.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container tiny">© <span id="year"></span> DemoInsurance</div>
+  </footer>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
